@@ -1,0 +1,14 @@
+from google.colab import files
+uploaded = files.upload()
+import pandas as pd
+df = pd.read_csv('orders.csv')
+print(df.head())
+print(df.columns)
+print(df['order_date'].unique())
+df['order_date'] = pd.to_datetime(df['order_date'], errors='coerce')
+df = df.dropna(subset=['order_date'])
+df['year_month'] = df['order_date'].dt.to_period('M')
+df['revenue'] = df['product_price'] * df['quantity']
+monthly_revenue = df.groupby('year_month')['revenue'].sum().reset_index()
+print(monthly_revenue)
+
